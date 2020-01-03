@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    Performance API |  varvar的博客
+    JS执行机制 |  varvar的博客
   </title>
   
   <link rel="shortcut icon" href="/favicon.ico" />
@@ -30,7 +30,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-Performance-API" class="article article-type-post" itemscope
+  <article id="post-JS执行机制" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -38,7 +38,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  Performance API
+  JS执行机制
 </h1>
   
 
@@ -47,8 +47,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/01/02/Performance-API/" class="article-date">
-  <time datetime="2020-01-02T08:34:28.000Z" itemprop="datePublished">2020-01-02</time>
+      <a href="/2020/01/03/JS%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/" class="article-date">
+  <time datetime="2020-01-03T06:00:12.000Z" itemprop="datePublished">2020-01-03</time>
 </a>
       
     </div>
@@ -71,20 +71,50 @@
       
 
       
-      <h2 id="Performance-API"><a href="#Performance-API" class="headerlink" title="Performance API"></a>Performance API</h2><p>用于精确度量、控制、增强浏览器性能表现</p>
+      <h2 id="JavaScript-执行机制"><a href="#JavaScript-执行机制" class="headerlink" title="JavaScript 执行机制"></a>JavaScript 执行机制</h2><p>JS是<strong>单线程的</strong>，JS是通过事件队列（Event Loop）的方式来实现异步回调的</p>
+<h3 id="一、进程和线程"><a href="#一、进程和线程" class="headerlink" title="一、进程和线程"></a>一、进程和线程</h3><ol>
+<li>进程：是CPU资源分配的最小单位，进程之间相互独立，任意时刻，CPU总是运行一个进程（工厂）</li>
+<li>线程：是CPU调度的最小单位（工人）<br>一个进程中可以有多个线程</li>
+</ol>
+<p>每个应用程序都是一个进程，浏览器就是多进程的，每个Tab页，就是一个独立的进程</p>
 <hr>
-<h3 id="四个属性"><a href="#四个属性" class="headerlink" title="四个属性"></a>四个属性</h3><p>1、timing对象提供了各种与浏览器处理相关的时间数据</p>
-<p>例：计算出发送请求到接受完成数据所消耗的时间</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> timing = <span class="built_in">window</span>.performance.timing</span><br><span class="line"><span class="keyword">let</span> duration = timing.responseEnd - timing.requestStart</span><br></pre></td></tr></table></figure>
-<p>2、navigation呈现了如何导航到当前文档的信息，有两个属性<br>（1）type：表示如何导航到当前页面的<br>    0：表示当前页面是通过点击链接，书签和表单提交，或者脚本操作，或者在url中直接输入地址访问<br>    1：表示当前页面是点击刷新或者调用location.reload()方法访问的<br>    2：表示当前页面是通过历史记录或者前进后退按钮访问的<br>    255：其他方式访问的<br>（2）redirectCount：表示到达当前页面之前经过几次重定向<br>3、timeOrigin：表示performance性能测试开始时间（千分之一毫秒）<br>4、onresourcetimingbufferfull：表示当浏览器资源时间性能缓冲区已满时会触发的回调函数<br>5、memory：一个非标准属性，chrome浏览器提供，这个属性提供了一个获取到基本内存使用情况的对象    </p>
-<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><p><a href="https://segmentfault.com/a/1190000011826821" target="_blank" rel="noopener">https://segmentfault.com/a/1190000011826821</a><br><a href="https://www.w3cschool.cn/javascript_guide/javascript_guide-hxou26a6.html" target="_blank" rel="noopener">https://www.w3cschool.cn/javascript_guide/javascript_guide-hxou26a6.html</a></p>
+<h3 id="二、执行和运行"><a href="#二、执行和运行" class="headerlink" title="二、执行和运行"></a>二、执行和运行</h3><ol>
+<li>执行：一般依赖于环境，比如<strong>node</strong>、<strong>浏览器</strong>等。JavaScript在不同环境下的执行机制可能并不相同<br>（Event Loop是JavaScript的一种执行方式）</li>
+<li>运行：是指JavaScript的解析引擎，是统一的</li>
+</ol>
+<hr>
+<h3 id="三、任务队列"><a href="#三、任务队列" class="headerlink" title="三、任务队列"></a>三、任务队列</h3><ol>
+<li>task就是任务，每一个语句就是一个任务</li>
+<li>queue就是FIFO的队列（First Input First Output的缩写，先入先出队列）</li>
+<li>TaskQueue就是承载任务的队列，而JavaScript的EventLoop就是会不断的过来找这个queue，问有没有task可以运行</li>
+</ol>
+<hr>
+<h3 id="四、同步任务和异步任务"><a href="#四、同步任务和异步任务" class="headerlink" title="四、同步任务和异步任务"></a>四、同步任务和异步任务</h3><ol>
+<li>同步任务：主线程来执行的时候立即就能执行的代码</li>
+<li>异步任务：主线程执行到这个task的时候，“唉，你等会，我现在先不执行，等我xxx完了以后我再来等你执行”。意思就是你先去执行憋得task，等我这xxx完之后再往TaskQueue里面塞一个task的同步任务等待被执行。</li>
+</ol>
+<hr>
+<h3 id="五、Event-Loop"><a href="#五、Event-Loop" class="headerlink" title="五、Event Loop"></a>五、Event Loop</h3><p>JavaScript有一个主线程（main thread）和调用栈（call-tack）也称之为执行栈。所有任务都会放到调用栈等待主线程来执行</p>
+<ol>
+<li>主线程自上而下执行所有代码</li>
+<li>同步任务直接进入到主线程被执行，而异步任务则进入到Event Table并注册相应的回调函数</li>
+<li>异步任务完成后，Event Table会将这个函数移入到Event Queue</li>
+<li>主线程任务执行完了以后，会从Event Queue中读取任务，进入到主线程去执行，如果TaskQueue中没有任务执行，主线程就一直在这等着</li>
+<li>循环如上</li>
+</ol>
+<hr>
+<h3 id="六、宏任务（MacroTask）和微任务（MicroTask）"><a href="#六、宏任务（MacroTask）和微任务（MicroTask）" class="headerlink" title="六、宏任务（MacroTask）和微任务（MicroTask）"></a>六、宏任务（MacroTask）和微任务（MicroTask）</h3><ol>
+<li>宏任务：所有同步任务代码都是MacroTask（不严谨），setTImeout、setInterval、I/O等都是宏任务</li>
+<li>微任务：process.nextTick、Promise.then catch finally、MutationObserver除了这几个，其他的同步都是宏任务</li>
+</ol>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://mp.weixin.qq.com/s/Jj1TPz1aKyke1kjb5x8dNQ" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/Jj1TPz1aKyke1kjb5x8dNQ</a></p>
 
       
       <!-- 打赏 -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://wangning0916.github.io/2020/01/02/Performance-API/" data-id="ck4xsi9fh0004psumh4ii4bnx"
+      <a data-url="https://wangning0916.github.io/2020/01/03/JS%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/" data-id="ck4xsi9ez0000psumfsuq90zv"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li></ul>
@@ -97,19 +127,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/01/03/JS%E6%89%A7%E8%A1%8C%E6%9C%BA%E5%88%B6/" class="article-nav-link">
+      <a href="/2020/01/03/Vue%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            JS执行机制
+            Vue组件通信
           
         </div>
       </a>
     
     
-      <a href="/2020/01/02/Lodash/" class="article-nav-link">
+      <a href="/2020/01/02/Performance-API/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Lodash</div>
+        <div class="article-nav-title">Performance API</div>
       </a>
     
   </nav>
